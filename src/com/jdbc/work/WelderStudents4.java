@@ -36,6 +36,7 @@ public class WelderStudents4 {
 			System.out.println("1. Insert Record");
 			System.out.println("2. Select Record");
 			System.out.println("3. All Record : Callable Statement");
+			System.out.println("4. Record By RollNo : Callable Statement");
 
 			int choice = Integer.parseInt(scanner.nextLine());
 
@@ -48,6 +49,9 @@ public class WelderStudents4 {
 				break;
 			case 3:
 				welderStudent.selectAllRecords();
+				break;
+			case 4:
+				welderStudent.selectRecordByRollNo();
 				break;
 			default:
 				break;
@@ -124,11 +128,37 @@ public class WelderStudents4 {
 		}
 	}
 	
+	//-------- using procedures------------
+	
 	private void selectAllRecords() throws SQLException {
 		System.out.println("Showing all records ");
 		//to use this first create PROCEDUR ( GET_ALL_NSTI() ) in mysql
 		
 		CallableStatement callableStatement =  connection.prepareCall("{ call GET_ALL_NSTI() }");
+		
+		ResultSet result = callableStatement.executeQuery();
+		
+		while(result.next()) {
+			
+			int sRollNumber = result.getInt("roll_number");
+			String sName = result.getString("name");
+			double sPercentage = result.getDouble("percentage");
+			String sAddress = result.getString("address");
+
+			System.out.println("-"+sRollNumber+"-"+sName+"-"+sPercentage+"-"+sAddress);
+
+		}
+	}
+	
+	private void selectRecordByRollNo() throws SQLException {
+		
+		System.out.println("Enter roll no to fetch details : ");
+		int roll = Integer.parseInt(scanner.nextLine());
+				
+		CallableStatement callableStatement =  connection.prepareCall("{ call GET_RECORD(?) }");
+		
+		//callableStatement.setInt(1,5);
+		callableStatement.setInt(1,roll);
 		
 		ResultSet result = callableStatement.executeQuery();
 		
