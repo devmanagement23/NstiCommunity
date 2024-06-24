@@ -37,6 +37,7 @@ public class WelderStudents4 {
 			System.out.println("2. Select Record");
 			System.out.println("3. All Record : Callable Statement");
 			System.out.println("4. Record By RollNo : Callable Statement");
+			System.out.println("5. Update Record");
 
 			int choice = Integer.parseInt(scanner.nextLine());
 
@@ -52,6 +53,9 @@ public class WelderStudents4 {
 				break;
 			case 4:
 				welderStudent.selectRecordByRollNo();
+				break;
+			case 5:
+				welderStudent.updateRecord();
 				break;
 			default:
 				break;
@@ -172,5 +176,86 @@ public class WelderStudents4 {
 			System.out.println("-"+sRollNumber+"-"+sName+"-"+sPercentage+"-"+sAddress);
 
 		}
+	}
+	
+	private void updateRecord() throws SQLException {
+		System.out.println("we are in update setup");
+		
+		// 1st step check required Record is present in table or not.(READ/SELECT)
+				
+		//String  sql = "select * from student where roll_number = 5";
+		System.out.println("Enter roll no to update record: ");
+		int rollToUpdate = Integer.parseInt(scanner.nextLine());
+		
+		String  sql = "select * from student where roll_number = "+rollToUpdate;
+		Statement statement = connection.createStatement();
+		ResultSet result = statement.executeQuery(sql);
+		
+		if(result.next()) {
+			
+			int rollNumberToUpdate = result.getInt("roll_number");
+			System.out.println("Roll No : "+rollNumberToUpdate);
+			
+			System.out.println("Name : "+result.getString("name"));
+			System.out.println("Percentage : "+result.getDouble("percentage"));
+			System.out.println("Address : "+result.getString("Address"));
+						
+			//Things to update
+			System.out.println("\nWhat do you want to update?");
+			System.out.println("1.Name");
+			System.out.println("2.Percentage");
+			System.out.println("3.Address");
+			
+			int choice = Integer.parseInt(scanner.nextLine());
+						
+			String sqlQuery = "update student set ";
+			                // update student set name = 'kamal' where roll_no = 4
+			
+			switch(choice) {
+			
+			case 1:
+				System.out.println("Enter new name :");
+				String newName = scanner.nextLine();
+				sqlQuery = sqlQuery +"name = ? where roll_number = "+rollNumberToUpdate;
+				PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery);
+				preparedStatement.setString(1, newName);
+				
+				int rows = preparedStatement.executeUpdate();
+				if(rows > 0) {
+					System.out.println("Name get updated");
+				}				
+				break;
+			case 2:
+				System.out.println("Enter new percentage :");
+				double newPercentage = 	Double.parseDouble(scanner.nextLine());
+				sqlQuery = sqlQuery +"percentage = ? where roll_number = "+rollNumberToUpdate;
+				PreparedStatement preparedStatement2 = connection.prepareStatement(sqlQuery);
+				preparedStatement2.setDouble(1, newPercentage);
+				
+				int rows2 = preparedStatement2.executeUpdate();
+				if(rows2 > 0) {
+					System.out.println("Percentage get updated");
+				}	
+				break;
+			case 3:
+				System.out.println("Enter new address :");
+				String newAddress = scanner.nextLine();
+				sqlQuery = sqlQuery +"address = ? where roll_number = "+rollNumberToUpdate;
+				PreparedStatement preparedStatement3 = connection.prepareStatement(sqlQuery);
+				preparedStatement3.setString(1, newAddress);
+				
+				int rows3 = preparedStatement3.executeUpdate();
+				if(rows3 > 0) {
+					System.out.println("Address get updated");
+				}
+				break;
+			default:
+				break;
+			}
+			
+		}else {
+			System.out.println("Records not found.");
+		}
+		
 	}
 }
