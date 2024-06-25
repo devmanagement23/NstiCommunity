@@ -38,6 +38,7 @@ public class WelderStudents4 {
 			System.out.println("3. All Record : Callable Statement");
 			System.out.println("4. Record By RollNo : Callable Statement");
 			System.out.println("5. Update Record");
+			System.out.println("6. Delete Record");
 
 			int choice = Integer.parseInt(scanner.nextLine());
 
@@ -56,6 +57,9 @@ public class WelderStudents4 {
 				break;
 			case 5:
 				welderStudent.updateRecord();
+				break;
+			case 6:
+				welderStudent.deleteRecord();
 				break;
 			default:
 				break;
@@ -257,5 +261,25 @@ public class WelderStudents4 {
 			System.out.println("Records not found.");
 		}
 		
+	}
+	
+	private void deleteRecord() throws SQLException {
+		
+		System.out.println("Enter roll number to delete : ");
+		int rollNumber = Integer.parseInt(scanner.nextLine());
+
+		String sql = "delete from student where roll_number = " + rollNumber;
+
+		Statement statement = connection.createStatement();
+
+		int result = statement.executeUpdate(sql);
+
+		if (result > 0) {
+
+			System.out.println("Record is deleted Successfully");
+		}
+		else {
+			System.out.println("No Records Found");
+		}
 	}
 }
