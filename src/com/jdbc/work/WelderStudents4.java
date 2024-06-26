@@ -39,6 +39,8 @@ public class WelderStudents4 {
 			System.out.println("4. Record By RollNo : Callable Statement");
 			System.out.println("5. Update Record");
 			System.out.println("6. Delete Record");
+			System.out.println("7. Understanding transactions");
+			System.out.println("8. Batch processing");
 
 			int choice = Integer.parseInt(scanner.nextLine());
 
@@ -60,6 +62,12 @@ public class WelderStudents4 {
 				break;
 			case 6:
 				welderStudent.deleteRecord();
+				break;
+			case 7:
+				welderStudent.transactionsManagement();
+				break;
+			case 8:
+				welderStudent.batchOperations();
 				break;
 			default:
 				break;
@@ -281,5 +289,73 @@ public class WelderStudents4 {
 		else {
 			System.out.println("No Records Found");
 		}
+	}
+	
+	private void transactionsManagement() throws SQLException {
+		
+		// All these transactions have to execute simulataneously
+		// If error occur in any one transaction then all transactions get ROLLBACK
+		
+		connection.setAutoCommit(false);
+		
+		String sql1 = "INSERT INTO STUDENT(name,percentage,address) VALUES ('rakesh',78,'delhi')";
+		String sql2 = "INSERT INTO STUDENT (name,percentage,address) VALUES('aishwarya',82,'pune')";
+		
+		PreparedStatement ps = connection.prepareStatement(sql1);
+		int row1 = ps.executeUpdate();
+		
+		ps = connection.prepareStatement(sql2);
+		int row2 = ps.executeUpdate();
+		
+		if(row1 > 0 && row2 > 0) {
+			connection.commit();
+		
+		}else {
+			connection.rollback();
+			
+			System.out.println("Error in sql queries.Table get rollbacked");
+		}
+		
+		System.out.println("Transaction command completed");
+	}
+	
+private void batchOperations() throws SQLException {
+		
+		// Multiple operations/transactions in single shot execute.
+		// (e.g Insert operations 10 times )
+		
+		connection.setAutoCommit(false);
+		
+		String sql1 = "INSERT INTO STUDENT (name,percentage,address) VALUES ('avtar',38,'kanpur')";
+		String sql2 = "INSERT INTO STUDENT (name,percentage,address) VALUES ('kartavya',82,'chandigarh')";
+		String sql3 = "INSERT INTO STUDENT (name,percentage,address) VALUES ('gopal',98,'hastinapur')";
+		String sql4 = "INSERT INTO STUDENT (name,percentage,address) VALUES ('govinda',97,'dwarka')";
+		String sql5 = "INSERT INTO STUDENT (name,percentage,address) VALUES ('balram',99,'mathura')";
+		
+		Statement statement = connection.createStatement();
+		
+		statement.addBatch(sql1);
+		statement.addBatch(sql2);
+		statement.addBatch(sql3);
+		statement.addBatch(sql4);
+		statement.addBatch(sql5);
+		
+		int[] rows = statement.executeBatch();
+		
+		//for-each loop
+		for (int i : rows) {
+			
+			if(i > 0 ) {
+				continue;			
+			}else {
+				connection.rollback();
+				
+				System.out.println("Error in sql queries.Table get rollbacked");
+			}			
+		}		
+		
+		connection.commit();
+		
+		System.out.println("Batch Processing command completed");
 	}
 }
